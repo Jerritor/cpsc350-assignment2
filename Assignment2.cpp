@@ -5,12 +5,11 @@
 
 using namespace std;
 
-bool randomConfig;
-int runMode, boundaryMode, rows, columns;
-double density;
-string outputFile;
-//bool** newGrid;
-
+bool randomConfig; //set by setRandomConfig();
+int runMode, boundaryMode, rows, columns; //set by setRunMode(), setBoundaryMode(). setRandomConfig() x2
+double density; //set by setRandomConfig()
+string outputFile; //set by setOutputFile()
+string *newGrid; //set by readGridFile()
 
 void Assignment2::startProgram()
 {
@@ -41,6 +40,13 @@ void Assignment2::setRandomConfig()
 		cout << "Please enter the number corresponding to your option." << endl;
 		setRandomConfig();
 	}
+
+	for(int i = 0; i < rows; i++) //rows
+	{
+		for(int j = 0; j < columns; j++) //columns
+			cout << newGrid[i][j];
+		cout << endl;
+	}
 }
 
 void Assignment2::setBoundaryMode()
@@ -60,8 +66,8 @@ void Assignment2::setOutputFile()
 
 void Assignment2::readGridFile(string f)
 {
-	ifstream inputfile;
-	inputfile.open(f);
+	ifstream inputfile; //input stream
+	inputfile.open(f); //opening the user inputted file
 
 	if (inputfile.fail())
 	{
@@ -69,10 +75,7 @@ void Assignment2::readGridFile(string f)
 		exit(1);
 	}
 	else
-	{
-		cout << "Map File Loaded: " << f << endl;
-	}
-
+		cout << "Opening " << f << "...\n";
 	string currentline;
 	int linenum = 0;
 	while (getline(inputfile, currentline,'\n')) //not end of file
@@ -80,14 +83,14 @@ void Assignment2::readGridFile(string f)
 		linenum++;
 		cout << linenum << "| ";
 
-		if (linenum == 1)
+		if (linenum == 1) //line 1: # of rows
 		{
 			try
 			{
 				rows = stoi(currentline);
 
 				cout << "rows: " << rows << endl;
-				//newGrid = new bool[rows];
+				newGrid = new string[rows];
 			}
 			catch (invalid_argument& ia)
 			{
@@ -104,11 +107,13 @@ void Assignment2::readGridFile(string f)
 				columns = stoi(currentline);
 
 				cout << "columns: " << columns << endl;
-					/**
+
+				/**
 				for(int i = 0; i < rows; i++)
 				{
 					newGrid[rows] = new bool[columns];
-				} **/
+				}
+				**/
 			}
 			catch (invalid_argument& ia)
 			{
@@ -118,28 +123,32 @@ void Assignment2::readGridFile(string f)
 				exit(1);
 			}
 		}
-		else //grid
+		else //grid: lines 3 or greater
 		{
-			int lineLen = currentline.length()-1;
+			int lineLen = currentline.length();
 
 			if (lineLen != columns) //making sure line length = # of grid columns
 			{
-				cerr << "Error with line " << linenum << endl;
-				cerr << "Line length must equal column length stated on row 2" << endl;
+				cerr << "Error with grid width - line " << linenum << endl;
+				cerr << "Grid width must equal # of columns stated on row 2" << endl;
 				cerr << "Use a valid map file." << endl;
 				exit(1);
 			}
 
-			for (int c = 0; c < lineLen; c++) //characters
+			newGrid[linenum-3].assign(currentline);
+
+			/**
+			for (int c = 0; c < columns; c++) //char in string index
 			{
 				switch (currentline[c]) //setting values of grid as bools
 				{
 					case '-':
-						//newGrid[currentline-3][c] = false;
+						cout << "hello" << endl;
+						Assignment2::newGrid[linenum-3][c] = false; //FIX THIS
 						cout << "-";
 						break;
 					case 'X':
-						//newGrid[currentline-3][c] = true;
+						Assignment2::newGrid[linenum-3][c] = true;
 						cout << "X";
 						break;
 					default:
@@ -147,16 +156,22 @@ void Assignment2::readGridFile(string f)
 						break;
 				}
 			}
+			**/
+
 			cout << endl;
 		}
 		inputfile.clear();
 	}
 
-	if (inputfile.fail())
-		cerr << "Error while reading file" << endl;
-	if (inputfile.eof())
-		cerr << "EOF Error" << endl;
+	if (linenum-2 != rows) //checking if # of map lines-2 = # of grid rows
+	{
+		cerr << "Error with grid height" << endl;
+		cerr << "Grid height must equal column length stated on row 1" << endl;
+		cerr << "Use a valid map file." << endl;
+		exit(1);
+	}
 
+	cout << "Map File Succesfully Loaded: " << f << endl;
 	inputfile.close();
 }
 
@@ -171,10 +186,10 @@ Assignment2::~Assignment2()
 	/**
 	//deleting columns
 	for (int i = 0; i < rows; i++) {
-		delete * newGrid[i];
+		delete[] newGrid[i];
 	}
+	**/
 
 	//deleting rows
-	delete * newGrid;
-	**/
+	delete[] newGrid;
 }

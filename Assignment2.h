@@ -9,9 +9,10 @@ class Assignment2
     ~Assignment2();
   private:
     bool randomConfig;
-    int boundaryMode;
+    int boundaryMode, rows, columns;
     bool runMode;
     string outputFile;
+    string* newGrid;
 
     void startProgram();
     void setRandomConfig();
@@ -19,5 +20,5 @@ class Assignment2
     void setRunMode();
     void setOutputFile();
 
-	void readGridFile(string f);
+    void readGridFile(string f);
 };
