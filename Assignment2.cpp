@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <math.h>
 
 using namespace std;
 
@@ -11,41 +12,52 @@ double density; //set by setRandomConfig()
 string outputFile; //set by setOutputFile()
 string *newGrid; //set by readGridFile()
 
+//called on instantiation
 void Assignment2::startProgram()
 {
 	setRandomConfig();
 }
 
+//sub functions
 void Assignment2::setRandomConfig()
 {
 	cout << "Do you wish to provide a map file or randomly generate one?" << endl;
 	cout << "1: Map File" << endl;
 	cout << "2: Generate Map" << endl;
+	cout << "> ";
 
 	string input;
 	cin >> input;
 
 	if (input[0] == '1') //map file
 	{
+		randomConfig = false;
 		cout << "Input filename (must be in directory & includes extension): ";
 		cin >> input;
+
 		readGridFile(input);
+
+		/**
+		//tests the grid map
+		for(int i = 0; i < rows; i++) //rows
+		{
+			for(int j = 0; j < columns; j++) //columns
+				cout << newGrid[i][j];
+			cout << endl;
+		}
+		**/
+
 	}
-	else if (input[0] == '2')
+	else if (input[0] == '2') //generate random map
 	{
-		cout << "Generate Map" << endl;
+		randomConfig = true;
+
+		generateRandomGrid();
 	}
-	else
+	else //wrong input
 	{
 		cout << "Please enter the number corresponding to your option." << endl;
 		setRandomConfig();
-	}
-
-	for(int i = 0; i < rows; i++) //rows
-	{
-		for(int j = 0; j < columns; j++) //columns
-			cout << newGrid[i][j];
-		cout << endl;
 	}
 }
 
@@ -64,6 +76,7 @@ void Assignment2::setOutputFile()
 
 }
 
+//sub-sub functions
 void Assignment2::readGridFile(string f)
 {
 	ifstream inputfile; //input stream
@@ -84,45 +97,9 @@ void Assignment2::readGridFile(string f)
 		cout << linenum << "| ";
 
 		if (linenum == 1) //line 1: # of rows
-		{
-			try
-			{
-				rows = stoi(currentline);
-
-				cout << "rows: " << rows << endl;
-				newGrid = new string[rows];
-			}
-			catch (invalid_argument& ia)
-			{
-				cerr << "Invalid argument: " << ia.what() << endl;
-				cerr << "Error converting line 1 to int" << endl;
-				cerr << "Use a valid map file." << endl;
-				exit(1);
-			}
-		}
+			setRows(randomConfig,currentline);
 		else if (linenum == 2) //columns
-		{
-			try
-			{
-				columns = stoi(currentline);
-
-				cout << "columns: " << columns << endl;
-
-				/**
-				for(int i = 0; i < rows; i++)
-				{
-					newGrid[rows] = new bool[columns];
-				}
-				**/
-			}
-			catch (invalid_argument& ia)
-			{
-				cerr << "Invalid argument: " << ia.what() << endl;
-				cerr << "Error converting line 2 to int" << endl;
-				cerr << "Use a valid map file." << endl;
-				exit(1);
-			}
-		}
+			setColumns(randomConfig,currentline);
 		else //grid: lines 3 or greater
 		{
 			int lineLen = currentline.length();
@@ -135,28 +112,8 @@ void Assignment2::readGridFile(string f)
 				exit(1);
 			}
 
-			newGrid[linenum-3].assign(currentline);
-
-			/**
-			for (int c = 0; c < columns; c++) //char in string index
-			{
-				switch (currentline[c]) //setting values of grid as bools
-				{
-					case '-':
-						cout << "hello" << endl;
-						Assignment2::newGrid[linenum-3][c] = false; //FIX THIS
-						cout << "-";
-						break;
-					case 'X':
-						Assignment2::newGrid[linenum-3][c] = true;
-						cout << "X";
-						break;
-					default:
-						cout << "E";
-						break;
-				}
-			}
-			**/
+			//linenum >= 3
+			newGrid[linenum-3].assign(currentline); //assigning strings to be passed”
 
 			cout << endl;
 		}
@@ -175,21 +132,155 @@ void Assignment2::readGridFile(string f)
 	inputfile.close();
 }
 
-Assignment2::Assignment2()
-{
-	setRandomConfig();
-	//startProgram();
-}
-
-Assignment2::~Assignment2()
+void Assignment2::generateRandomGrid()
 {
 	/**
-	//deleting columns
-	for (int i = 0; i < rows; i++) {
-		delete[] newGrid[i];
-	}
+	BUG/DESIGN PROBLEM: Before the use of the while-loops, the functions
+	used to recall generateRandomGrid() again, however, i had some
+	random recall repetition again. Not sure what the problem was.
 	**/
 
-	//deleting rows
+	bool rowsSet = false, colsSet = false, densSet = false;
+	string input;
+
+
+	cout << "=======" << endl;
+	while (!rowsSet) //setting rows
+	{
+
+		cout << "Number of rows/height of grid: ";
+		cin >> input;
+		rowsSet = setRows(randomConfig,input);
+		//cout << "rowsSet: " << rowsSet << endl;
+	}
+
+	cout << "=======" << endl;
+	while (!colsSet) //setting columns
+	{
+		cout << "Number of columns/width of grid: ";
+		cin >> input;
+		colsSet = setColumns(randomConfig,input);
+		//cout << "colsSet: " << colsSet << endl;
+	}
+
+	cout << "=======" << endl;
+	while (!densSet) //setting density
+	{
+		cout << "Density [0,1]: ";
+		cin >> input;
+		densSet = setDensity(input);
+		//cout << "densSet: " << densSet << endl;
+	}
+}
+
+//utility functions
+bool Assignment2::setRows(bool isRandom, string s)
+{
+	try
+	{
+		if (fmod(stod(s),1.0) != 0.0) //if input is a decimal
+		{
+			if(isRandom) //random map
+			{
+				cout << "Please input an integer\n" << endl;
+			}
+			else //flat file
+			{
+				cout << "Error with row input - Check line 1 of " << s << endl;
+			}
+
+			return false;
+		}
+		rows = stoi(s);
+
+		newGrid = new string[rows];
+		return true;
+	}
+	catch (invalid_argument& ia)
+	{
+		cerr << "Invalid argument: " << ia.what() << endl;
+		if (isRandom) //random map
+		{
+			cout << "Error with your row input\n" << endl;
+		}
+		else //flat-grid map
+		{
+			cerr << "Error converting line 2 to int" << endl;
+			cerr << "Use a valid map file." << endl;
+			exit(1);
+		}
+	}
+	return false;
+}
+
+bool Assignment2::setColumns(bool isRandom, string s)
+{
+	try
+	{
+		if (fmod(stod(s),1.0) != 0.0) //if input is a decimal
+		{
+			if (isRandom)
+			{
+				cout << "Please input a integer\n" << endl;
+			}
+			else
+			{
+				cout << "Error with column input - Check line 2 of " << s << endl;
+			}
+			return false;
+		}
+
+		columns = stoi(s);
+		return true;
+	}
+	catch (invalid_argument& ia)
+	{
+		cerr << "Invalid argument: " << ia.what() << endl;
+		if (isRandom) //random map
+		{
+			cout << "Error with your column input\n" << endl;
+		}
+		else //flat-grid map
+		{
+			cerr << "Error converting line 1 to int" << endl;
+			cerr << "Use a valid map file." << endl;
+			exit(1);
+		}
+	}
+	return false;
+}
+
+bool Assignment2::setDensity(string s)
+{
+	try
+	{
+		double d = stod(s);
+		if (d > 1.0 || d < 0.0) //if out of range
+		{
+			cout << "Please input a decimal [0,1]\n" << endl;
+			return false;
+		}
+
+		density = d;
+		return true;
+	}
+	catch (invalid_argument& ia)
+	{
+		cerr << "Invalid argument: " << ia.what() << endl;
+		cout << "Please input a decimal [0,1]\n" << endl;
+	}
+	return false;
+}
+
+//Constructor
+Assignment2::Assignment2()
+{
+	//startProgram();
+	setRandomConfig();
+}
+
+//Destructor
+Assignment2::~Assignment2()
+{
 	delete[] newGrid;
 }

@@ -21,4 +21,9 @@ class Assignment2
     void setOutputFile();
 
     void readGridFile(string f);
+    void generateRandomGrid();
+
+    bool setRows(bool isRandom, string s);
+    bool setColumns(bool isRandom, string s);
+    bool setDensity(string s);
 };
