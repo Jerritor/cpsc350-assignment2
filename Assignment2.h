@@ -10,6 +10,7 @@ class Assignment2
   private:
     bool randomConfig;
     int boundaryMode, rows, columns;
+	double density;
     bool runMode;
     string outputFile;
     string* newGrid;
