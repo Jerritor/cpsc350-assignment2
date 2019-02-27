@@ -1,4 +1,5 @@
 #include "Assignment2.h"
+#include "GameofLife.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -12,6 +13,32 @@ void Assignment2::startProgram()
 	setRandomConfig();
 	cout << endl;
 	setBoundaryMode();
+	cout << endl;
+	setAutoPlay();
+	cout << endl;
+
+	if (outputFile.length() != 0) //if outputFile was uninitialized
+	{
+		if (density != -1.0) //if density was initialized
+		{
+			GameofLife game(boundaryMode,outputFile,rows,columns,density);
+		}
+		else
+		{
+			GameofLife game(boundaryMode,outputFile,rows,columns,newGrid);
+		}
+	}
+	else
+	{
+		if (density != -1.0)
+		{
+			GameofLife game(boundaryMode,autoPlay,rows,columns,density);
+		}
+		else
+		{
+			GameofLife game(boundaryMode,autoPlay,rows,columns,newGrid);
+		}
+	}
 }
 
 //User Interface functions
@@ -68,18 +95,42 @@ void Assignment2::setBoundaryMode()
 		cout << "Please enter the number corresponding to your option." << endl;
 		setBoundaryMode();
 	}
-
-	cout << "boundaryMode: " << boundaryMode << endl;
 }
 
-void Assignment2::setRunMode()
+void Assignment2::setAutoPlay()
 {
+	cout << "How do you want to run the simulation?" << endl;
+	cout << "1: Automatically iterate thru generations" << endl;
+	cout << "2: Iterate by pressing (or mashing) 'enter'" << endl;
+	cout << "3: Output simulation to file" << endl;
+	cout << "> ";
 
-}
+	string input;
+	cin >> input;
 
-void Assignment2::setOutputFile()
-{
+	if (input[0] == '1') //automatically iterate
+		autoPlay = true;
+	else if (input[0] == '2') //iterate every 'enter'
+		autoPlay = false;
+	else if (input[0] == '3') //output to file
+	{
+		bool outputFileSet = false;
+		while (!outputFileSet)
+		{
+			cout << "Output filename: ";
+			cin >> input;
 
+			if (input.length() != 0) //if file name is not empty
+			{
+				outputFileSet = true;
+			}
+			else
+			{
+				cout << "Enter a valid output file" << endl << endl;
+			}
+		}
+		outputFile = input;
+	}
 }
 
 //subfunctions
@@ -212,8 +263,8 @@ bool Assignment2::setRows(bool isRandom, string s)
 
 			return false;
 		}
-		rows = stoi(s);
 
+		rows = stoi(s);
 		newGrid = new string[rows];
 		return true;
 	}
@@ -296,6 +347,9 @@ bool Assignment2::setDensity(string s)
 //Constructor
 Assignment2::Assignment2()
 {
+	//uninitialized values (for error checking)
+	density = -1.0;
+
 	startProgram();
 	//setRandomConfig();
 }

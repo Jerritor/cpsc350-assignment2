@@ -11,15 +11,14 @@ class Assignment2
     bool randomConfig;
     int boundaryMode, rows, columns;
 	double density;
-    bool runMode;
+    bool autoPlay;
     string outputFile;
     string* newGrid;
 
     void startProgram();
     void setRandomConfig();
     void setBoundaryMode();
-    void setRunMode();
-    void setOutputFile();
+    void setAutoPlay();
 
     void readGridFile(string f);
     void generateRandomGrid();
