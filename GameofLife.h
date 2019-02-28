@@ -13,6 +13,8 @@ class GameofLife
 		GameofLife(int bMode, bool autoPlay, int r, int c, string* newGrid);
 		~GameofLife();
 	private:
+		//private constructor
+		GameofLife(int b, int row, int cols);
 		//common vars for all 4 constructors
 		int boundaryMode;
 		string outfile;
