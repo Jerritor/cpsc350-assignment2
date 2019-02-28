@@ -64,7 +64,7 @@ void Assignment2::setRandomConfig()
 	else if (input[0] == '2') //generate random map
 	{
 		randomConfig = true;
-		generateRandomGrid();
+		setRandomGridProperties();
 	}
 	else //invalid input
 	{
@@ -204,11 +204,11 @@ void Assignment2::readGridFile(string f)
 	inputfile.close();
 }
 
-void Assignment2::generateRandomGrid()
+void Assignment2::setRandomGridProperties()
 {
 	/**
 	BUG/DESIGN PROBLEM: Before the use of the while-loops, the functions
-	used to recall generateRandomGrid() again, however, i had some
+	used to recall setRandomGridProperties() again, however, i had some
 	random recall repetition again. Not sure what the problem was.
 	**/
 

@@ -21,7 +21,7 @@ class Assignment2
     void setAutoPlay();
 
     void readGridFile(string f);
-    void generateRandomGrid();
+    void setRandomGridProperties();
 
     bool setRows(bool isRandom, string s);
     bool setColumns(bool isRandom, string s);
