@@ -7,3 +7,6 @@ Works Referenced:
 - modulo for non-integers: https://en.cppreference.com/w/c/numeric/math/fmod
 - string erase method: http://www.cplusplus.com/reference/string/string/erase/
 - string reserve space method: http://www.cplusplus.com/reference/string/string/reserve/
+- delegating constructors: https://www.ibm.com/developerworks/community/blogs/5894415f-be62-4bc0-81c5-3956e82276f3/entry/introduction_to_the_c_11_feature_delegating_constructors?lang=en
+	- used with overloaded constructors in GameofLife.cpp
+- git branches: https://www.atlassian.com/git/tutorials/learn-branching-with-bitbucket-cloud

@@ -4,6 +4,12 @@
 
 using namespace std;
 
+void GameofLife::setBoundaryMode(int b) { boundaryMode = b; }
+
+void GameofLife::setRows(int r) { rows = r; }
+
+void GameofLife::setColumns(int c) { columns = c; }
+
 void GameofLife::generateRandomGrid()	//Generate Random Grid
 {
 	/**
@@ -54,25 +60,23 @@ void GameofLife::generateRandomGrid()	//Generate Random Grid
 //Private constructor - called by overloaded constructors
 GameofLife::GameofLife(int b, int row, int cols)
 {
-	boundaryMode = b;
-	rows = row;
-	columns = cols;
+	setBoundaryMode(b);
+	setRows(row);
+	setColumns(cols);
 	grid = new string[rows];
 
+	cout << "Instantiating Game of Life simulation..." << endl;
 	cout << "boundaryMode: " << boundaryMode << endl;
 	cout << "rows: " << rows << endl;
 	cout << "columns: " << columns << endl;
 }
 
 //Public Constructors
-GameofLife::GameofLife(int bMode, string outputFile, int r, int c, double d)
+GameofLife::GameofLife(int bMode, string outputFile, int r, int c, double d) : GameofLife(bMode, r, c) //this calls the private constructor w/o needing to code it
 {
 	runMode = 3;
 	outfile.assign(outputFile);
 	density = d;
-
-	cout << "Instantiating Game of Life simulation..." << endl;
-	GameofLife(bMode, r, c);
 
 	cout << "outfile: " << outfile << endl;
 	cout << "density: " << density << endl;
@@ -82,13 +86,10 @@ GameofLife::GameofLife(int bMode, string outputFile, int r, int c, double d)
 	generateRandomGrid();
 }
 
-GameofLife::GameofLife(int bMode, string outputFile, int r, int c, string* newGrid)
+GameofLife::GameofLife(int bMode, string outputFile, int r, int c, string* newGrid) : GameofLife(bMode, r, c)
 {
 	runMode = 3;
 	outfile.assign(outputFile);
-
-	cout << "Instantiating Game of Life simulation..." << endl;
-	GameofLife(bMode, r, c);
 
 	cout << "outfile: " << outfile << endl;
 	cout << "runMode: " << runMode << endl;
@@ -101,16 +102,12 @@ GameofLife::GameofLife(int bMode, string outputFile, int r, int c, string* newGr
 	}
 }
 
-GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, double d)
+GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, double d) : GameofLife(bMode, r, c)
 {
-	if (autoPlay)
-		runMode = 1;
-	else
-		runMode = 2;
-	density = d;
+	if (autoPlay) runMode = 1;
+	else runMode = 2;
 
-	cout << "Instantiating Game of Life simulation..." << endl;
-	GameofLife(bMode, r, c);
+	density = d;
 
 	cout << "density: " << density << endl;
 	cout << "runMode: " << runMode << endl;
@@ -119,15 +116,12 @@ GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, double d)
 	generateRandomGrid();
 }
 
-GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, string* newGrid)
+GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, string* newGrid) : GameofLife(bMode, r, c)
 {
 	if (autoPlay)
 		runMode = 1;
 	else
 		runMode = 2;
-
-	cout << "Instantiating Game of Life simulation..." << endl;
-	GameofLife(bMode, r, c);
 
 	cout << "runMode: " << runMode << endl;
 	cout << "Inputted Grid:" << endl;
