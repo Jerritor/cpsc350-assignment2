@@ -17,6 +17,7 @@ void Assignment2::startProgram()
 	setAutoPlay();
 	cout << endl;
 
+	//Initializing the simulation based on the options selected
 	if (outputFile.length() != 0) //if outputFile was uninitialized
 	{
 		if (density != -1.0) //if density was initialized

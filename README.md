@@ -6,3 +6,4 @@ Works Referenced:
 - casting variable types: https://www.geeksforgeeks.org/static_cast-in-c-type-casting-operators/
 - modulo for non-integers: https://en.cppreference.com/w/c/numeric/math/fmod
 - string erase method: http://www.cplusplus.com/reference/string/string/erase/
+- string reserve space method: http://www.cplusplus.com/reference/string/string/reserve/
