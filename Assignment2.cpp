@@ -217,7 +217,7 @@ void Assignment2::setRandomGridProperties()
 	string input;
 
 
-	cout << "=======" << endl;
+	cout << endl;
 	while (!rowsSet) //setting rows
 	{
 
@@ -227,7 +227,7 @@ void Assignment2::setRandomGridProperties()
 		//cout << "rowsSet: " << rowsSet << endl;
 	}
 
-	cout << "=======" << endl;
+	cout << endl;
 	while (!colsSet) //setting columns
 	{
 		cout << "Number of columns/width of grid: ";
@@ -236,7 +236,7 @@ void Assignment2::setRandomGridProperties()
 		//cout << "colsSet: " << colsSet << endl;
 	}
 
-	cout << "=======" << endl;
+	cout << endl;
 	while (!densSet) //setting density
 	{
 		cout << "Density: ";

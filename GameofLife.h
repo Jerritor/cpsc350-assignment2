@@ -14,16 +14,25 @@ class GameofLife
 	private:
 		GameofLife(int b, int row, int cols);
 
+		void runSimulation(); //start program
+
 		//subfunctions
 		void generateRandomGrid();
+		void setGrid(string* g);
+		string* nextGeneration();
 
 		//utility functions
 		void setBoundaryMode(int b);
 		void setRows(int r);
 		void setColumns(int c);
+		void printGrid();
+		bool isSimOver();
 
+
+		//grid
 		string* grid;
-		int generation; //current generation
+		int generation = 0; //current generation
+		long alive = 0;
 
 		//common vars for all 4 constructors
 		int boundaryMode;
