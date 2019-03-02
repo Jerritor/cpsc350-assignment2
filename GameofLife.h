@@ -19,20 +19,26 @@ class GameofLife
 		//subfunctions
 		void generateRandomGrid();
 		void setGrid(string* g);
-		string* nextGeneration();
+		void nextGeneration(); //uses the other nextGen__(funcs)
+		void nextGenClassic();
+		void nextGenDoughnut();
+		void nextGenMirror();
 
 		//utility functions
 		void setBoundaryMode(int b);
 		void setRows(int r);
 		void setColumns(int c);
 		void printGrid();
+		char processNeighbor(int i, int r, int c);
 		bool isSimOver();
 
 
 		//grid
 		string* grid;
+		string* nextGrid;
 		int generation = 0; //current generation
-		long alive = 0;
+		int alive = 0;
+		int nextAlive = 0;
 
 		//common vars for all 4 constructors
 		int boundaryMode;

@@ -7,15 +7,41 @@ using namespace std;
 
 void GameofLife::runSimulation()
 {
-	if (boundaryMode = 1) //classic
+	if (runMode == 1) //auto play
+	{
+		printGrid(); //printing grid
+
+		/**
+		a = 0, nA = 0
+		nextGen():
+			nA = 0
+			nA = # of next alive
+		if nA == a
+			not next loop
+		else
+			set a = nA
+			next loop
+
+		**/
+		do
+		{
+			alive = nextAlive;
+			nextGeneration(); //sets nextAlive = # of alive cells next generation
+			for(int r = 0; r < rows; r++) //set grid[] to nextGrid[]
+			{
+				grid[r] = nextGrid[r];
+			}
+			generation++;
+			cout << "alive: " << alive << "| nextAlive: " << nextAlive << endl;
+			printGrid();
+		}
+		while (!isSimOver()); //loop = new generation
+	}
+	else if (runMode == 2) //iterate w/ 'enter
 	{
 
 	}
-	else if (boundaryMode = 2) //doughnut
-	{
-
-	}
-	else //3 - mirror
+	else //3 - output to file
 	{
 
 	}
@@ -75,7 +101,7 @@ void GameofLife::generateRandomGrid()	//Generate Random Grid
 
 void GameofLife::setGrid(string* g)
 {
-	cout << "Inputted Grid:" << endl;
+	//cout << "Inputted Grid:" << endl;
 	for(int i = 0; i < rows; i++)
 	{
 		for(int j = 0; j < columns; j++)
@@ -84,25 +110,98 @@ void GameofLife::setGrid(string* g)
 			alive++;
 		}
 		grid[i] = g[i];
-		cout << grid[i] << endl;
+		//cout << grid[i] << endl;
 	}
-	cout << "alive: " << alive << endl;
+	//cout << "alive: " << alive << endl;
 }
 
-string* GameofLife::nextGeneration()
+void GameofLife::nextGeneration()
 {
-	if (boundaryMode = 1) //classic
-	{
+	if (boundaryMode == 1) nextGenClassic(); //classic
+	else if (boundaryMode == 2) nextGenDoughnut(); //doughnut
+	else nextGenMirror(); //3 - mirror
+}
 
-	}
-	else if (boundaryMode = 2) //doughnut
+void GameofLife::nextGenClassic()
+{
+	nextAlive = 0;
+	for (int r = 0; r < rows; r++)
 	{
+		string gridLine;
+		gridLine.reserve(columns);
 
-	}
-	else //3 - mirror
-	{
+		//cout << "r = " << r << endl;
+		for (int c = 0; c < columns; c++)
+		{
+			int neighbors = 0;
+			//cout << "c = " << c << endl;
+			if (r != 0 && c != 0) //conditions where NW = null
+			{
+				if (grid[r-1][c-1] == 'X') neighbors++; //check NW
+			}
+			//else cout << "false" << endl;
+			//cout << "check 1";
+			if (r != 0)
+			{
+				if (grid[r-1][c] == 'X') neighbors++; //check N
+			}
+			//else cout << "false" << endl;
+			//cout << '2';
+			if (r != 0 && c != columns-1)
+			{
+				if (grid[r-1][c+1] == 'X') neighbors++; //check NE
+			}
+			//else cout << "false" << endl;
+			//cout << '3';
+			if (c != columns-1)
+			{
+				if (grid[r][c+1] == 'X') neighbors++; //check E
+			}
+			//else cout << "false" << endl;
+			//cout << '4';
+			if (r != rows-1 && c != columns-1)
+			{
+				if (grid[r+1][c+1] == 'X') neighbors++; //check SE
+			}
+			//else cout << "false" << endl;
+			//cout << '5';
+			if (r != rows-1)
+			{
+				if (grid[r+1][c] == 'X') neighbors++; //check S
+			}
+			//else cout << "false" << endl;
+			//cout << '6';
+			if (r != rows-1 && c != 0)
+			{
+				if (grid[r+1][c-1] == 'X') neighbors++; //check SW
+			}
+			//else cout << "false" << endl;
+			//cout << '7';
+			if (c != 0)
+			{
+				if (grid[r][c-1] == 'X') neighbors++; //check W
+			}
+			//else cout << "false" << endl;
+			//cout << '8' << endl;
+			gridLine += processNeighbor(neighbors,r,c); //number of neighbors per cell
+			cout << neighbors;
+		}
+		cout << endl;
+		//cout << gridLine << endl;
+		nextGrid[r] = gridLine;
 
+		//nextGrid[r] = processNeighborLine(gridLine,r);
 	}
+}
+
+void GameofLife::nextGenDoughnut()
+{
+
+}
+
+void GameofLife::nextGenMirror()
+{
+
 }
 
 //utility functions
@@ -114,32 +213,66 @@ void GameofLife::setColumns(int c) { columns = c; }
 
 void GameofLife::printGrid()
 {
-	for(int c = 0; c < rows; c++)
+	ofstream output;
+	if (runMode == 1 || runMode == 2)
+		cout << "===Generation: " << generation << "===" << endl; //increment generation here
+	else //3
+	{
+		output.open(outfile);
+		output << "===Generation: " << generation << "===" << endl;
+	}
+
+	for(int r = 0; r < rows; r++)
 	{
 		if (runMode == 1 || runMode == 2) //print
 		{
-			cout << "===Generation: " << generation++ << "===" << endl; //increment generation here
-			cout << grid[c] << endl;
+			cout << grid[r] << endl;
 		}
 		else //output to file,runmode == 3
 		{
-			ofstream output = ofstream("jerrick.out");
-
-			if (output.is_open())
-			{
-				output << "===Generation: " << generation++ << "===" << endl;
-				output << grid[c] << endl;
-			}
-
+			if (output.is_open()) output << grid[r] << endl;
 			output.close();
 		}
+
+		//update grid to new grid
 	}
+}
+
+char GameofLife::processNeighbor(int i,int r, int c)
+{
+	if (i <= 1) return '-';
+	else if (i == 2)
+	{
+		if (grid[r][c] == 'X') nextAlive++;
+		return grid[r][c];
+	}
+	else if (i == 3)
+	{
+		nextAlive++;
+		return 'X';
+	}
+	else return '-'; //i >= 4
 }
 
 bool GameofLife::isSimOver()
 {
-	//
+	if (nextAlive == alive)
+	{
+		bool same = true;
+		for(int r = 0; r < rows; r++) //set grid[] to nextGrid[]
+		{
+			cout << grid[r] << "|" << nextGrid[r] << "|" << grid[r].compare(nextGrid[r]) << endl;
+			if (grid[r].compare(nextGrid[r]) != 0)
+			{
+				same = false;
+			}
+		}
+		cout << "same: " << same << endl;
+		return same;
+	}
+	else return false;
 }
+
 
 //Private constructor - called by overloaded constructors
 GameofLife::GameofLife(int b, int row, int cols)
@@ -148,6 +281,7 @@ GameofLife::GameofLife(int b, int row, int cols)
 	setRows(row);
 	setColumns(cols);
 	grid = new string[rows];
+	nextGrid = new string[rows];
 
 	cout << "Instantiating Game of Life simulation..." << endl;
 
@@ -173,7 +307,7 @@ GameofLife::GameofLife(int bMode, string outputFile, int r, int c, double d) : G
 
 	//GENERATE RANDOM GRID
 	generateRandomGrid();
-	printGrid();
+	runSimulation();
 }
 
 GameofLife::GameofLife(int bMode, string outputFile, int r, int c, string* newGrid) : GameofLife(bMode, r, c)
@@ -188,6 +322,7 @@ GameofLife::GameofLife(int bMode, string outputFile, int r, int c, string* newGr
 	**/
 
 	setGrid(newGrid);
+	runSimulation();
 }
 
 GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, double d) : GameofLife(bMode, r, c)
@@ -205,6 +340,7 @@ GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, double d) : Gameo
 
 	//GENERATE RANDOM GRID
 	generateRandomGrid();
+	runSimulation();
 }
 
 GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, string* newGrid) : GameofLife(bMode, r, c)
@@ -214,10 +350,12 @@ GameofLife::GameofLife(int bMode, bool autoPlay, int r, int c, string* newGrid) 
 
 	//cout << "runMode: " << runMode << endl; //ERROR CHECKING
 	setGrid(newGrid);
+	runSimulation();
 }
 
 //Deconstructors
 GameofLife::~GameofLife()
 {
 	delete[] grid;
+	delete[] nextGrid;
 }
