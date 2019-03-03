@@ -233,7 +233,156 @@ void GameofLife::nextGenClassic()
 
 void GameofLife::nextGenDoughnut()
 {
+	nextAlive = 0;
 
+	//doughnutGrid is same as grid but with borders
+	string* doughnutGrid = new string[rows+2]; //2 extra borders
+
+	//SETTING NEIGHBORS
+	for(int r2 = 0; r2 < rows+2; r2++)
+	{
+		string neighborLine;
+		neighborLine.reserve(columns+2);
+
+		for(int c2 = 0; c2 < columns+2; c2++)
+		{
+
+			if (r2 == 0) //top row
+			{
+				if (c2 == 0) //topleft corner
+				{
+					//cout << grid[rows-1][columns-1] << endl;
+					if (grid[rows-1][columns-1] == 'X') //bot right
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else if (c2 == columns+1) //top right corner
+				{
+					if (grid[rows-1][0] == 'X') //bot left
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else
+				{
+					//non-corner top row
+					if (grid[rows-1][c2-1] == 'X') //same column, bottom row
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '=';
+				}
+			}
+			else if (r2 == rows+1) //bottom row
+			{
+				if (c2 == 0) //bottom left corner
+				{
+					if (grid[0][columns-1] == 'X') //top right
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else if (c2 == columns+1) //bottom right corner
+				{
+					if (grid[0][0] == 'X') //top left
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else
+				{
+					//non-corner bottom row
+					if (grid[0][c2-1] == 'X') //same column, top row
+						neighborLine += 'N';
+					else
+						neighborLine += '=';
+				}
+			}
+			else //all rows between top and bottom
+			{
+				if (c2 == 0) //left column
+				{
+					if (grid[r2-1][columns-1] == 'X') //same row, right column
+						neighborLine += 'N';
+					else neighborLine += '=';
+				}
+				else if (c2 == columns+1) //right column
+				{
+					if (grid[r2-1][0] == 'X') //same row, left column
+						neighborLine += 'N';
+					else neighborLine += '=';
+				}
+				else //grid tiles
+				{
+					neighborLine += grid[r2-1][c2-1];
+				}
+			}
+		}
+		//cout << endl;
+		//cout << neighborLine << endl;
+		doughnutGrid[r2] = neighborLine;
+	}
+
+	//CHECKING NEIGHBORS
+	for(int r2 = 1; r2 < rows+1; r2++)
+	{
+		string gridLine;
+		gridLine.reserve(columns);
+
+		for(int c2 = 1; c2 < columns+1; c2++)
+		{
+			int neighbors = 0;
+			if (doughnutGrid[r2-1][c2-1] == 'X' || doughnutGrid[r2-1][c2-1] == 'N') neighbors++; //check NW
+			if (doughnutGrid[r2-1][c2] == 'X' || doughnutGrid[r2-1][c2-1] == 'N') neighbors++; //check N
+			if (doughnutGrid[r2-1][c2+1] == 'X' || doughnutGrid[r2-1][c2+1] == 'N') neighbors++; //check NE
+			if (doughnutGrid[r2][c2+1] == 'X' || doughnutGrid[r2][c2+1] == 'N') neighbors++; //check E
+			if (doughnutGrid[r2+1][c2+1] == 'X' || doughnutGrid[r2+1][c2+1] == 'N') neighbors++; //check SE
+			if (doughnutGrid[r2+1][c2] == 'X' || doughnutGrid[r2+1][c2] == 'N') neighbors++; //check S
+			if (doughnutGrid[r2+1][c2-1] == 'X' || doughnutGrid[r2+1][c2-1] == 'N') neighbors++; //check SW
+			if (doughnutGrid[r2][c2-1] == 'X' || doughnutGrid[r2][c2-1] == 'N') neighbors++; //check W
+			gridLine += processNeighbor(neighbors,r2-1,c2-1);
+			//cout << neighbors;
+		}
+		//cout << endl;
+		nextGrid[r2-1] = gridLine;
+	}
+
+	/**
+	for (int r = 0; r < rows; r++)
+	{
+		string gridLine;
+		gridLine.reserve(columns);
+
+		for (int c = 0; c < columns; c++)
+		{
+			int neighbors = 0;
+			if (r != 0 && c != 0) //conditions where NW = null
+				if (grid[r-1][c-1] == 'X') neighbors++; //check NW
+			if (r != 0)
+				if (grid[r-1][c] == 'X') neighbors++; //check N
+			if (r != 0 && c != columns-1)
+				if (grid[r-1][c+1] == 'X') neighbors++; //check NE
+			if (c != columns-1)
+				if (grid[r][c+1] == 'X') neighbors++; //check E
+			if (r != rows-1 && c != columns-1)
+				if (grid[r+1][c+1] == 'X') neighbors++; //check SE
+			if (r != rows-1)
+				if (grid[r+1][c] == 'X') neighbors++; //check S
+			if (r != rows-1 && c != 0)
+				if (grid[r+1][c-1] == 'X') neighbors++; //check SW
+			if (c != 0)
+				if (grid[r][c-1] == 'X') neighbors++; //check W
+
+			gridLine += processNeighbor(neighbors,r,c); //number of neighbors per cell
+		}
+		//cout << endl;
+		//cout << gridLine << endl;
+		nextGrid[r] = gridLine;
+
+		//nextGrid[r] = processNeighborLine(gridLine,r);
+	}**/
+
+	delete[] doughnutGrid;
 }
 
 void GameofLife::nextGenMirror()

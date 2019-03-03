@@ -29,7 +29,7 @@ class GameofLife
 		void setRows(int r);
 		void setColumns(int c);
 		void printGrid();
-		char processNeighbor(int i, int r, int c);
+		char processNeighbor(int i, int r, int c); //boundaryMode 1
 		bool isSimOver();
 		void setGridtoNextGrid();
 
