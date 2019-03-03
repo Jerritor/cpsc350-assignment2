@@ -333,7 +333,7 @@ void GameofLife::nextGenDoughnut()
 		{
 			int neighbors = 0;
 			if (doughnutGrid[r2-1][c2-1] == 'X' || doughnutGrid[r2-1][c2-1] == 'N') neighbors++; //check NW
-			if (doughnutGrid[r2-1][c2] == 'X' || doughnutGrid[r2-1][c2-1] == 'N') neighbors++; //check N
+			if (doughnutGrid[r2-1][c2] == 'X' || doughnutGrid[r2-1][c2] == 'N') neighbors++; //check N
 			if (doughnutGrid[r2-1][c2+1] == 'X' || doughnutGrid[r2-1][c2+1] == 'N') neighbors++; //check NE
 			if (doughnutGrid[r2][c2+1] == 'X' || doughnutGrid[r2][c2+1] == 'N') neighbors++; //check E
 			if (doughnutGrid[r2+1][c2+1] == 'X' || doughnutGrid[r2+1][c2+1] == 'N') neighbors++; //check SE
@@ -387,7 +387,120 @@ void GameofLife::nextGenDoughnut()
 
 void GameofLife::nextGenMirror()
 {
+	nextAlive = 0;
 
+	//same as grid but with borders
+	string* mirrorGrid = new string[rows+2]; //2 extra rows/cols
+
+	//SETTING NEIGHBORS
+	for(int r2 = 0; r2 < rows+2; r2++)
+	{
+		string neighborLine;
+		neighborLine.reserve(columns+2);
+
+		for(int c2 = 0; c2 < columns+2; c2++)
+		{
+
+			if (r2 == 0) //top row
+			{
+				if (c2 == 0) //topleft corner
+				{
+					//cout << grid[rows-1][columns-1] << endl;
+					if (grid[0][0] == 'X') //top left
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else if (c2 == columns+1) //top right corner
+				{
+					if (grid[rows-1][columns-1] == 'X') //top right
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else
+				{
+					//non-corner top row
+					if (grid[0][c2-1] == 'X') //same column, bottom row
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '=';
+				}
+			}
+			else if (r2 == rows+1) //bottom row
+			{
+				if (c2 == 0) //bottom left corner
+				{
+					if (grid[rows-1][0] == 'X') //bottom left
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else if (c2 == columns+1) //bottom right corner
+				{
+					if (grid[rows-1][columns-1] == 'X') //bottom right
+						neighborLine += 'N'; //n marks border neighbor
+					else
+						neighborLine += '='; //= marks border non-neighbor
+				}
+				else
+				{
+					//non-corner bottom row
+					if (grid[rows-1][c2-1] == 'X') //same column, top row
+						neighborLine += 'N';
+					else
+						neighborLine += '=';
+				}
+			}
+			else //all rows between top and bottom
+			{
+				if (c2 == 0) //left column
+				{
+					if (grid[r2-1][0] == 'X') //left column
+						neighborLine += 'N';
+					else neighborLine += '=';
+				}
+				else if (c2 == columns+1) //right column
+				{
+					if (grid[r2-1][columns-1] == 'X') //right column
+						neighborLine += 'N';
+					else neighborLine += '=';
+				}
+				else //grid tiles
+				{
+					neighborLine += grid[r2-1][c2-1];
+				}
+			}
+		}
+		//cout << endl;
+		//cout << neighborLine << endl;
+		mirrorGrid[r2] = neighborLine;
+	}
+
+	//CHECKING NEIGHBORS
+	for(int r2 = 1; r2 < rows+1; r2++)
+	{
+		string gridLine;
+		gridLine.reserve(columns);
+
+		for(int c2 = 1; c2 < columns+1; c2++)
+		{
+			int neighbors = 0;
+			if (mirrorGrid[r2-1][c2-1] == 'X' || mirrorGrid[r2-1][c2-1] == 'N') neighbors++; //check NW
+			if (mirrorGrid[r2-1][c2] == 'X' || mirrorGrid[r2-1][c2] == 'N') neighbors++; //check N
+			if (mirrorGrid[r2-1][c2+1] == 'X' || mirrorGrid[r2-1][c2+1] == 'N') neighbors++; //check NE
+			if (mirrorGrid[r2][c2+1] == 'X' || mirrorGrid[r2][c2+1] == 'N') neighbors++; //check E
+			if (mirrorGrid[r2+1][c2+1] == 'X' || mirrorGrid[r2+1][c2+1] == 'N') neighbors++; //check SE
+			if (mirrorGrid[r2+1][c2] == 'X' || mirrorGrid[r2+1][c2] == 'N') neighbors++; //check S
+			if (mirrorGrid[r2+1][c2-1] == 'X' || mirrorGrid[r2+1][c2-1] == 'N') neighbors++; //check SW
+			if (mirrorGrid[r2][c2-1] == 'X' || mirrorGrid[r2][c2-1] == 'N') neighbors++; //check W
+			gridLine += processNeighbor(neighbors,r2-1,c2-1);
+			//cout << neighbors;
+		}
+		//cout << endl;
+		nextGrid[r2-1] = gridLine;
+	}
+	delete[] mirrorGrid;
 }
 
 //utility functions
