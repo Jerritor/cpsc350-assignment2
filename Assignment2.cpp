@@ -116,6 +116,7 @@ void Assignment2::setAutoPlay()
 	else if (input[0] == '3') //output to file
 	{
 		bool outputFileSet = false;
+		cout << "WARNING: File will be overwritten" << endl;
 		while (!outputFileSet)
 		{
 			cout << "Output filename: ";

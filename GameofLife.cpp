@@ -31,6 +31,7 @@ void GameofLife::runSimulation()
 				nextGeneration();
 			}
 		} while (!isSimOver()); //loop = new generation
+		getchar();
 	}
 	else if (runMode == 2) //iterate w/ 'enter
 	{
@@ -57,12 +58,28 @@ void GameofLife::runSimulation()
 	}
 	else //3 - output to file
 	{
-
+		cout << "Outputting simulation onto " << outfile << " - Please wait..." << endl;
+		printGrid();
+		nextGeneration();
+		do
+		{
+			if (isSimOver()) //if # alive == # alive next gen
+			{
+				setGridtoNextGrid();
+				printGrid();
+			}
+			else
+			{
+				setGridtoNextGrid();
+				alive = nextAlive;
+				printGrid();
+				nextGeneration();
+			}
+		} while(!isSimOver());
+		getchar();
 	}
 
 	cout << "Simulation ended. Press 'Enter' to exit program";
-	char tmp = '\0';
-	//cin.get(tmp);
 	getchar();
 	cout << endl;
 }
@@ -238,8 +255,10 @@ void GameofLife::printGrid()
 		cout << "===Generation: " << generation << "===" << endl; //increment generation here
 	else //3
 	{
-		output.open(outfile);
-		output << "===Generation: " << generation << "===" << endl;
+		if (generation == 0) output = ofstream(outfile);
+		else output = ofstream(outfile, ios::app);
+
+		if (output.is_open()) output << "===Generation: " << generation << "===" << endl;
 	}
 
 	for(int r = 0; r < rows; r++)
@@ -251,11 +270,10 @@ void GameofLife::printGrid()
 		else //output to file,runmode == 3
 		{
 			if (output.is_open()) output << grid[r] << endl;
-			output.close();
 		}
-
-		//update grid to new grid
 	}
+
+	if (runMode == 3) output.close();
 }
 
 char GameofLife::processNeighbor(int i,int r, int c)
@@ -276,6 +294,8 @@ char GameofLife::processNeighbor(int i,int r, int c)
 
 bool GameofLife::isSimOver()
 {
+	int genLimit = 999; //only used with runMode 3
+	if (runMode == 3) if (generation >= genLimit) return true;
 	if (nextAlive == alive || nextAlive == 0) //if gen stabilize or everyone's dead
 	{
 		bool same = true;
