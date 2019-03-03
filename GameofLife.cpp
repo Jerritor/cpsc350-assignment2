@@ -10,58 +10,6 @@ void GameofLife::runSimulation()
 {
 	if (runMode == 1) //auto play
 	{
-		/**
-		initial:
-		a = 0, nA = 0, gen = 0
-
-		setting equal to gen 0
-		grid[] = gen 0
-		generateRandomGrid(a = # alive gen 0) or setGrid(a = # alive gen 0)
-		print grid
-
-
-		nextGenClassic(nextGrid[] = gen 1)
-		processNeighbor(nA = # alive gen 1)
-
-		check if nA = A (if # alive gen 0 = # alive gen 1)
-		if so:
-			grid = nextGrid //grid = gen 1
-			print grid
-			end program
-		else:
-			grid = nextGrid //grid = gen 1
-			alive = nA //from # alive gen 0 to # alive gen 1
-			print grid
-
-			nextGenClassic(nextGrid = gen 2)
-			processNeighbor(nA = # alive gen 2)
-			check if na = A (if # alive gen 1 = # alive gen 2):
-				grid = nextGrid //grid = gen 2
-				print grid
-				end program
-			else:
-				grid = nextGrid //grid = gen2
-				alive = nA //from # alive gen 1 to # alive gen 2
-				print grid
-
-		///////////////////////
-
-		GameofLife(a = # alive, nA = 0, gen = 0)
-
-		print()
-
-
-
-		nextGen():
-			nA = 0
-			nA = # of next alive
-		if nA == a
-			not next loop
-		else
-			set a = nA
-			next loop
-
-		**/
 		printGrid(); //printing grid
 		nextGeneration(); //next Alive = # of alive next generation
 
@@ -71,8 +19,8 @@ void GameofLife::runSimulation()
 			//cout << "alive: " << alive << "| nextAlive: " << nextAlive << endl;
 			if (isSimOver()) //if # alive == # alive next gen
 			{
-				//setGridtoNextGrid();
-				//printGrid();
+				setGridtoNextGrid();
+				printGrid();
 				//program ends
 			}
 			else
@@ -83,19 +31,29 @@ void GameofLife::runSimulation()
 				nextGeneration();
 			}
 		} while (!isSimOver()); //loop = new generation
-
-		/**
-		for (int i = 0; i < 2; i++) //loop 5 more generations
-		{
-			setGridtoNextGrid();
-			alive = nextAlive;
-			printGrid();
-			nextGeneration();
-		} **/
 	}
 	else if (runMode == 2) //iterate w/ 'enter
 	{
+		getchar();
+		printGrid();
+		nextGeneration();
 
+		do
+		{
+			getchar();
+			if (isSimOver()) //if # alive == # alive next gen
+			{
+				setGridtoNextGrid();
+				printGrid();
+			}
+			else
+			{
+				setGridtoNextGrid();
+				alive = nextAlive;
+				printGrid();
+				nextGeneration();
+			}
+		} while(!isSimOver());
 	}
 	else //3 - output to file
 	{
@@ -105,7 +63,6 @@ void GameofLife::runSimulation()
 	cout << "Simulation ended. Press 'Enter' to exit program";
 	char tmp = '\0';
 	//cin.get(tmp);
-	getchar();
 	getchar();
 	cout << endl;
 }
