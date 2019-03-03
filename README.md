@@ -11,3 +11,4 @@ Works Referenced:
 - delegating constructors: https://www.ibm.com/developerworks/community/blogs/5894415f-be62-4bc0-81c5-3956e82276f3/entry/introduction_to_the_c_11_feature_delegating_constructors?lang=en
 	- used with overloaded constructors in GameofLife.cpp
 - git branches: https://www.atlassian.com/git/tutorials/learn-branching-with-bitbucket-cloud
+- pausing program in microseconds: http://man7.org/linux/man-pages/man3/usleep.3.html

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <unistd.h>
 #include "GameofLife.h"
 
 using namespace std;
@@ -9,10 +10,48 @@ void GameofLife::runSimulation()
 {
 	if (runMode == 1) //auto play
 	{
-		printGrid(); //printing grid
-
 		/**
-		a = 0, nA = 0
+		initial:
+		a = 0, nA = 0, gen = 0
+
+		setting equal to gen 0
+		grid[] = gen 0
+		generateRandomGrid(a = # alive gen 0) or setGrid(a = # alive gen 0)
+		print grid
+
+
+		nextGenClassic(nextGrid[] = gen 1)
+		processNeighbor(nA = # alive gen 1)
+
+		check if nA = A (if # alive gen 0 = # alive gen 1)
+		if so:
+			grid = nextGrid //grid = gen 1
+			print grid
+			end program
+		else:
+			grid = nextGrid //grid = gen 1
+			alive = nA //from # alive gen 0 to # alive gen 1
+			print grid
+
+			nextGenClassic(nextGrid = gen 2)
+			processNeighbor(nA = # alive gen 2)
+			check if na = A (if # alive gen 1 = # alive gen 2):
+				grid = nextGrid //grid = gen 2
+				print grid
+				end program
+			else:
+				grid = nextGrid //grid = gen2
+				alive = nA //from # alive gen 1 to # alive gen 2
+				print grid
+
+		///////////////////////
+
+		GameofLife(a = # alive, nA = 0, gen = 0)
+
+		print()
+
+
+
 		nextGen():
 			nA = 0
 			nA = # of next alive
@@ -23,19 +62,36 @@ void GameofLife::runSimulation()
 			next loop
 
 		**/
+		printGrid(); //printing grid
+		nextGeneration(); //next Alive = # of alive next generation
+
 		do
 		{
-			alive = nextAlive;
-			nextGeneration(); //sets nextAlive = # of alive cells next generation
-			for(int r = 0; r < rows; r++) //set grid[] to nextGrid[]
+			usleep(100000); //1 sec
+			//cout << "alive: " << alive << "| nextAlive: " << nextAlive << endl;
+			if (isSimOver()) //if # alive == # alive next gen
 			{
-				grid[r] = nextGrid[r];
+				//setGridtoNextGrid();
+				//printGrid();
+				//program ends
 			}
-			generation++;
-			cout << "alive: " << alive << "| nextAlive: " << nextAlive << endl;
+			else
+			{
+				setGridtoNextGrid();
+				alive = nextAlive;
+				printGrid();
+				nextGeneration();
+			}
+		} while (!isSimOver()); //loop = new generation
+
+		/**
+		for (int i = 0; i < 2; i++) //loop 5 more generations
+		{
+			setGridtoNextGrid();
+			alive = nextAlive;
 			printGrid();
-		}
-		while (!isSimOver()); //loop = new generation
+			nextGeneration();
+		} **/
 	}
 	else if (runMode == 2) //iterate w/ 'enter
 	{
@@ -45,6 +101,13 @@ void GameofLife::runSimulation()
 	{
 
 	}
+
+	cout << "Simulation ended. Press 'Enter' to exit program";
+	char tmp = '\0';
+	//cin.get(tmp);
+	getchar();
+	getchar();
+	cout << endl;
 }
 
 void GameofLife::generateRandomGrid()	//Generate Random Grid
@@ -184,9 +247,9 @@ void GameofLife::nextGenClassic()
 			//else cout << "false" << endl;
 			//cout << '8' << endl;
 			gridLine += processNeighbor(neighbors,r,c); //number of neighbors per cell
-			cout << neighbors;
+			//cout << neighbors;
 		}
-		cout << endl;
+		//cout << endl;
 		//cout << gridLine << endl;
 		nextGrid[r] = gridLine;
 
@@ -256,21 +319,30 @@ char GameofLife::processNeighbor(int i,int r, int c)
 
 bool GameofLife::isSimOver()
 {
-	if (nextAlive == alive)
+	if (nextAlive == alive || nextAlive == 0) //if gen stabilize or everyone's dead
 	{
 		bool same = true;
 		for(int r = 0; r < rows; r++) //set grid[] to nextGrid[]
 		{
-			cout << grid[r] << "|" << nextGrid[r] << "|" << grid[r].compare(nextGrid[r]) << endl;
+			//cout << grid[r] << "|" << nextGrid[r] << "|" << grid[r].compare(nextGrid[r]) << endl;
 			if (grid[r].compare(nextGrid[r]) != 0)
 			{
 				same = false;
 			}
 		}
-		cout << "same: " << same << endl;
+		//cout << "same: " << same << endl;
 		return same;
 	}
 	else return false;
+}
+
+void GameofLife::setGridtoNextGrid()
+{
+	for(int r = 0; r < rows; r++) //set grid[] to nextGrid[]
+	{
+		grid[r] = nextGrid[r];
+	}
+	generation++;
 }
 
 

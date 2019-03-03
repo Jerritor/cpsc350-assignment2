@@ -31,6 +31,7 @@ class GameofLife
 		void printGrid();
 		char processNeighbor(int i, int r, int c);
 		bool isSimOver();
+		void setGridtoNextGrid();
 
 
 		//grid
