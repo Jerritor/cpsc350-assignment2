@@ -127,12 +127,6 @@ void GameofLife::generateRandomGrid()	//Generate Random Grid
 			numAlive--;
 		}
 	}
-
-	for(int r = 0; r < rows; r++)
-	{
-		cout << grid[r] << endl;
-	}
-
 	//cout << "numAlive: " << numAlive << endl;
 }
 
