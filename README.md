@@ -1,9 +1,10 @@
 # cpsc350-assignment2
 cpsc350 data structures assignment 2 game of life
-Torres 2301036
 
+Jerrick Torres 2301036
 NOTES:
 - If a grid used is infinite and runMode is set to output to file, it will only print 1000 generations (generation: 999)
+- I've never gotten more segmentation faults in my life when writing a program
 
 Works Referenced:
 - Convert string to int: http://www.cplusplus.com/reference/string/stoi/
