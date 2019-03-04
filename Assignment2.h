@@ -20,7 +20,7 @@ class Assignment2
     void setBoundaryMode();
     void setAutoPlay();
 
-    void readGridFile(string f);
+    bool readGridFile(string f);
     void setRandomGridProperties();
 
     bool setRows(bool isRandom, string s);
