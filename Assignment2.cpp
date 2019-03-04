@@ -53,16 +53,20 @@ void Assignment2::setRandomConfig()
 	string input;
 	cin >> input;
 
-	if (input[0] == '1') //map file
+	if (input == "1") //map file
 	{
 		randomConfig = false;
 
-		cout << "Input filename (must be in directory & includes extension): ";
-		cin >> input;
+		bool inputFileSet = false;
+		while (!inputFileSet)
+		{
+			cout << "Input filename (must be in directory & includes extension): ";
+			cin >> input;
 
-		readGridFile(input);
+			inputFileSet = readGridFile(input);
+		}
 	}
-	else if (input[0] == '2') //generate random map
+	else if (input == "2") //generate random map
 	{
 		randomConfig = true;
 		setRandomGridProperties();
@@ -85,11 +89,11 @@ void Assignment2::setBoundaryMode()
 	string input;
 	cin >> input;
 
-	if (input[0] == '1') //Classic
+	if (input == "1") //Classic
 		boundaryMode = 1;
-	else if (input[0] == '2') //Doughnut
+	else if (input == "2") //Doughnut
 		boundaryMode = 2;
-	else if (input[0] == '3') //Mirror
+	else if (input == "3") //Mirror
 		boundaryMode = 3;
 	else //invalid input
 	{
@@ -109,11 +113,11 @@ void Assignment2::setAutoPlay()
 	string input;
 	cin >> input;
 
-	if (input[0] == '1') //automatically iterate
+	if (input == "1") //automatically iterate
 		autoPlay = true;
-	else if (input[0] == '2') //iterate every 'enter'
+	else if (input == "2") //iterate every 'enter'
 		autoPlay = false;
-	else if (input[0] == '3') //output to file
+	else if (input == "3") //output to file
 	{
 		bool outputFileSet = false;
 		cout << "WARNING: File will be overwritten" << endl;
@@ -136,7 +140,7 @@ void Assignment2::setAutoPlay()
 }
 
 //subfunctions
-void Assignment2::readGridFile(string f)
+bool Assignment2::readGridFile(string f) //returns if gridfile is opened
 {
 	ifstream inputfile; //input stream
 	inputfile.open(f); //opening the user inputted file
@@ -144,7 +148,7 @@ void Assignment2::readGridFile(string f)
 	if (inputfile.fail())
 	{
 		cerr << "Error opening file. Enter a valid map file next time." << endl;
-		exit(1);
+		return false;
 	}
 	else
 		cout << "Opening " << f << "..." << endl;
@@ -160,7 +164,6 @@ void Assignment2::readGridFile(string f)
 		}
 
 		linenum++;
-		//cout << linenum << "|currentline: " << currentline << '|' << endl;
 
 		if (linenum == 1) //line 1: # of rows
 			setRows(randomConfig,currentline);
@@ -170,28 +173,20 @@ void Assignment2::readGridFile(string f)
 		{
 			int lineLen = currentline.length();
 
-			//cerr << "columns: " << columns << endl;
-			//cerr << "lineLen: " << lineLen << endl;
-
 			if (lineLen != columns) //making sure line length = # of grid columns
 			{
 				cerr << "Error with grid width - line " << linenum << endl;
 				cerr << "Grid width must equal # of columns stated on row 2" << endl;
 				cerr << "Use a valid map file." << endl;
 				inputfile.close();
-				exit(1);
+				return false;
 			}
 
 			//linenum >= 3
 			newGrid[linenum-3].assign(currentline); //assigning strings to be passed”
-
-			//cout << endl;
 		}
 		inputfile.clear();
 	}
-
-	//cout << "rows: " << rows << endl;
-	//cout << "linenum-2: " << linenum-2 << endl;
 
 	if (linenum-2 != rows) //checking if # of map lines-2 = # of grid rows
 	{
@@ -199,11 +194,12 @@ void Assignment2::readGridFile(string f)
 		cerr << "Grid height must equal column length stated on row 1" << endl;
 		cerr << "Use a valid map file." << endl;
 		inputfile.close();
-		exit(1);
+		return false;
 	}
 
 	cout << "Map File Succesfully Loaded: " << f << endl;
 	inputfile.close();
+	return true;
 }
 
 void Assignment2::setRandomGridProperties()
@@ -225,7 +221,6 @@ void Assignment2::setRandomGridProperties()
 		cout << "Number of rows/height of grid: ";
 		cin >> input;
 		rowsSet = setRows(randomConfig,input);
-		//cout << "rowsSet: " << rowsSet << endl;
 	}
 
 	cout << endl;
@@ -234,7 +229,6 @@ void Assignment2::setRandomGridProperties()
 		cout << "Number of columns/width of grid: ";
 		cin >> input;
 		colsSet = setColumns(randomConfig,input);
-		//cout << "colsSet: " << colsSet << endl;
 	}
 
 	cout << endl;
@@ -243,7 +237,6 @@ void Assignment2::setRandomGridProperties()
 		cout << "Density: ";
 		cin >> input;
 		densSet = setDensity(input);
-		//cout << "densSet: " << densSet << endl;
 	}
 }
 
@@ -353,7 +346,6 @@ Assignment2::Assignment2()
 	density = -1.0;
 
 	startProgram();
-	//setRandomConfig();
 }
 
 //Destructor
